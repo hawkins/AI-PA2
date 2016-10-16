@@ -255,10 +255,23 @@ def mrv(puzzle, unassigned):
     [unassigned] is a list of (row, column) tuples corresponding to cell locations
     '''
 
-    # TASK 4 CODE HERE
+    # Get domain of each unassigned cell and sort by how many entries are in each domain
+    sized = [(len(puzzle.cells[x[0]][x[1]].domain), x) for x in unassigned]
+    sized.sort()
 
-    # Change this.  Return your list of minimum remaining value locations
-    return unassigned
+    # Get min
+    minimum = sized[0][0]
+
+    # Create array of all elements with mrv
+    mrvs = []
+    for item in sized:
+        if item[0] == minimum:
+            mrvs.append(item[1])
+        else:
+            break
+
+    # Return list of minimum remaining value locations
+    return mrvs
 
 def max_degree(puzzle, tied):
     '''
@@ -290,7 +303,7 @@ def count_constraints(puzzle, row, column):
     # TASK 3 CODE HERE
 
     # Get the grid and cell index
-    grid, cell_index = self.get_grid_cell(row, column)
+    grid, cell_index = puzzle.get_grid_cell(row, column)
 
     # Create a list to store cells
     cell_list = []
@@ -298,20 +311,20 @@ def count_constraints(puzzle, row, column):
     # Cells in this column
     for r in [x for x in range(9) if x != row]:
         # Add to cell list
-        cell_list.append(self.cells[r][column])
+        cell_list.append(puzzle.cells[r][column])
 
     # Cells in this row
     for c in [x for x in range(9) if x != column]:
         # Add to cell list
-        cell_list.append(self.cells[row][c])
+        cell_list.append(puzzle.cells[row][c])
 
     # Cells in this grid
     for i in [x for x in range(9) if x != cell_index]:
         # Get the row, column indices
-        r, c = self.get_row_column(grid, i)
+        r, c = puzzle.get_row_column(grid, i)
 
         # Add to cell list
-        cell_list.append(self.cells[r][c])
+        cell_list.append(puzzle.cells[r][c])
 
     # Use a set to eliminate duplicates
     cell_set = list(set(cell_list))
