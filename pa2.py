@@ -170,11 +170,64 @@ class Sudoku():
 
         # TASK 2 CODE HERE
 
+        # Get the grid and cell index
+        grid, cell_index = self.get_grid_cell(row, column)
+
         #Modify these return values!!
         if mode == 'remove':
+            # Iterate over each group of constraining cells and remove value from domains
+
+            # Cells in this column
+            for r in [x for x in range(9) if x != row]:
+                # Remove the value
+                if not self.cells[r][column].remove_value(value):
+                    print('-> Issue at COLUMN self.cells[{}][{}] with value {}'.format(r, column, value))
+                    return False
+
+            # Cells in this row
+            for c in [x for x in range(9) if x != column]:
+                # Remove the value
+                if not self.cells[row][c].remove_value(value):
+                    print('-> Issue at ROW self.cells[{}][{}] with value {}'.format(row, c, value))
+                    return False
+
+            # Cells in this grid
+            for i in [x for x in range(9) if x != cell_index]:
+                # Get the row, column indices
+                r, c = self.get_row_column(grid, i)
+
+                # Remove the value
+                if not self.cells[r][c].remove_value(value):
+                    return False
+
+            # Return true if no domain was found empty
             return True
+
         elif mode == 'count':
-            return 0
+            # Iterate over each group of constraining cells and count how many times value appears in domains
+
+            count = 0
+
+            # Cells in this column
+            for r in [x for x in range(9) if x != row]:
+                if value in self.cells[r][column].domain:
+                    count += 1
+
+            # Cells in this row
+            for c in [x for x in range(9) if x != column]:
+                if value in self.cells[row][c].domain:
+                    count += 1
+
+            # Cells in this grid
+            for i in [x for x in range(9) if x != cell_index]:
+                r, c = self.get_row_column(grid, cell_index)
+
+                # Remove the value
+                if value in self.cells[r][c].domain:
+                    count += 1
+
+            # Return the number of values found in domains
+            return count
 
     def get_row_column(self, grid, cell):
         '''
