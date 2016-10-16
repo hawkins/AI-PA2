@@ -173,31 +173,36 @@ class Sudoku():
         # Get the grid and cell index
         grid, cell_index = self.get_grid_cell(row, column)
 
-        #Modify these return values!!
+        # Create a list to store cells
+        cell_list = []
+
+        # Cells in this column
+        for r in [x for x in range(9) if x != row]:
+            # Add to cell list
+            cell_list.append(self.cells[r][column])
+
+        # Cells in this row
+        for c in [x for x in range(9) if x != column]:
+            # Add to cell list
+            cell_list.append(self.cells[row][c])
+
+        # Cells in this grid
+        for i in [x for x in range(9) if x != cell_index]:
+            # Get the row, column indices
+            r, c = self.get_row_column(grid, i)
+
+            # Add to cell list
+            cell_list.append(self.cells[r][c])
+
+        # Use a set to eliminate duplicates
+        cell_set = list(set(cell_list))
+
+        # Switch behavior based on mode
         if mode == 'remove':
-            # Iterate over each group of constraining cells and remove value from domains
-
-            # Cells in this column
-            for r in [x for x in range(9) if x != row]:
+            # Iterate over all unique cells
+            for cell in cell_set:
                 # Remove the value
-                if not self.cells[r][column].remove_value(value):
-                    print('-> Issue at COLUMN self.cells[{}][{}] with value {}'.format(r, column, value))
-                    return False
-
-            # Cells in this row
-            for c in [x for x in range(9) if x != column]:
-                # Remove the value
-                if not self.cells[row][c].remove_value(value):
-                    print('-> Issue at ROW self.cells[{}][{}] with value {}'.format(row, c, value))
-                    return False
-
-            # Cells in this grid
-            for i in [x for x in range(9) if x != cell_index]:
-                # Get the row, column indices
-                r, c = self.get_row_column(grid, i)
-
-                # Remove the value
-                if not self.cells[r][c].remove_value(value):
+                if not cell.remove_value(value):
                     return False
 
             # Return true if no domain was found empty
@@ -208,22 +213,10 @@ class Sudoku():
 
             count = 0
 
-            # Cells in this column
-            for r in [x for x in range(9) if x != row]:
-                if value in self.cells[r][column].domain:
-                    count += 1
-
-            # Cells in this row
-            for c in [x for x in range(9) if x != column]:
-                if value in self.cells[row][c].domain:
-                    count += 1
-
-            # Cells in this grid
-            for i in [x for x in range(9) if x != cell_index]:
-                r, c = self.get_row_column(grid, cell_index)
-
-                # Remove the value
-                if value in self.cells[r][c].domain:
+            # Iterate over all unique cells
+            for cell in cell_set:
+                # Count if domain would be affected
+                if value in cell.domain:
                     count += 1
 
             # Return the number of values found in domains
