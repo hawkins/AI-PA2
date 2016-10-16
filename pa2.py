@@ -289,8 +289,43 @@ def count_constraints(puzzle, row, column):
 
     # TASK 3 CODE HERE
 
-    #MODIFY THIS
-    return 0
+    # Get the grid and cell index
+    grid, cell_index = self.get_grid_cell(row, column)
+
+    # Create a list to store cells
+    cell_list = []
+
+    # Cells in this column
+    for r in [x for x in range(9) if x != row]:
+        # Add to cell list
+        cell_list.append(self.cells[r][column])
+
+    # Cells in this row
+    for c in [x for x in range(9) if x != column]:
+        # Add to cell list
+        cell_list.append(self.cells[row][c])
+
+    # Cells in this grid
+    for i in [x for x in range(9) if x != cell_index]:
+        # Get the row, column indices
+        r, c = self.get_row_column(grid, i)
+
+        # Add to cell list
+        cell_list.append(self.cells[r][c])
+
+    # Use a set to eliminate duplicates
+    cell_set = list(set(cell_list))
+
+    count = 0
+
+    # Iterate over all unique cells
+    for cell in cell_set:
+        # Count if cell is unassigned (Value == None)
+        if not cell.value:
+            count += 1
+
+    # Return the number of values found in domains
+    return count
 
 def get_unassigned_variables(puzzle):
     '''
