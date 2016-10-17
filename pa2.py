@@ -390,7 +390,14 @@ def order_values(puzzle, row, column):
     #Get the current domain for this variable
     domain = puzzle.cells[row][column].domain[:]
 
-    # TASK 5 CODE HERE
+    # TODO: Remove this TASK 5 CODE HERE
+
+    # Forward check each value in the domain and sort based on results
+    scored = [(puzzle.forward_check(row, column, value, mode='count'), value) for value in domain]
+    scored.sort()
+
+    # Strip constraint counts to just have the sorted domain values
+    domain = [entry[1] for entry in scored]
 
     #Change this to return an ordered list
     return domain
@@ -411,35 +418,50 @@ def backtracking_search(puzzle):
 
     # 1. Base case, is input [puzzle] solved? If so, return the puzzle. Use is_solved() function
     #    to see if the puzzle is solved.
+    if puzzle.is_solved():
+        return puzzle
 
     # 2. Select a variable to assign next ( use select_variable() function, which returns
     #    row and column of the variable
+    r, c = select_variable(puzzle)
 
     # 3. Select an ordering over the values (use order_values(r,c) where r, c are the row
     #    and column of the selected variable.  It returns a list of values
+    domain = order_values(puzzle, r, c)
 
     # 4. For each value in the ordered list:
+    for value in domain:
 
         # 4.1 Get a copy of the puzzle to modify
         #     4.1.a Create new puzzle
+        new_puzzle = Sudoku()
 
         #     4.1.b Set it to be equal to the current puzzle (use copy_puzzle())
+        new_puzzle.copy_puzzle(puzzle)
 
         # 4.2 Assign current value to selected variable (use assign_value())
+        new_puzzle.cells[r][c].assign_value(value)
 
         # 4.3 Forward check from this assignment (use forward_check(), in 'remove' mode)
         #     which will return False if this assignment is invalid (empty domain was found)
         #     or True if it is valid.
-
+        # &
         # 4.4 If forward checking detects a problem, then continue to the next value
+        if not new_puzzle.forward_check(r, c, value):
+            continue
 
         # 4.5 If forward checking doesn't detect problem, then recurse on the
         #     modified puzzle (call backtracking_search())
+        solution = backtracking_search(new_puzzle)
 
         # 4.6 If the search succeeds (return value of backtracking is not None)
         #     return solved puzzle! (this is what backtracking_search should return)
+        if solution:
+            return solution
 
         # 4.7 If search is a failure, continue with next value for this variable
+        # if not solution:
+        #     continue # TODO: extraneous
 
     # 5. If all values for the chosen variable failed, return failure (None)
     return None
