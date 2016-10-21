@@ -12,8 +12,6 @@ def student_name():
     This function returns your name.  This will be used for automated grading
     """
 
-    # Task 1 CODE HERE
-
     # Change to be your name
     return 'Josh Hawkins'
 
@@ -168,8 +166,6 @@ class Sudoku():
         of how many values forward checking would remove
         '''
 
-        # TASK 2 CODE HERE
-
         # Get the grid and cell index
         grid, cell_index = self.get_grid_cell(row, column)
 
@@ -255,6 +251,9 @@ def mrv(puzzle, unassigned):
     [unassigned] is a list of (row, column) tuples corresponding to cell locations
     '''
 
+    # To disable mrv, simply return unassigned
+    # return unassigned
+
     # Get domain of each unassigned cell and sort by how many entries are in each domain
     sized = [(len(puzzle.cells[x[0]][x[1]].domain), x) for x in unassigned]
     sized.sort()
@@ -279,6 +278,10 @@ def max_degree(puzzle, tied):
     that have the maximum degree, i.e. are connected to the most unassigned other variables
     This uses the count_constraints function
     '''
+
+    # To disable max_degree, simply return tied
+    # return tied
+
     max_c = 0
     mc_variables = []
     for t in tied:
@@ -299,8 +302,6 @@ def count_constraints(puzzle, row, column):
     return this number
     This is called by the max_degree function
     '''
-
-    # TASK 3 CODE HERE
 
     # Get the grid and cell index
     grid, cell_index = puzzle.get_grid_cell(row, column)
@@ -384,6 +385,9 @@ def order_values(puzzle, row, column):
     in the 'count' mode to count the number of values that would be removed from other variables'
     domains by a particular variable=value assignment
     '''
+
+    # To disable order_values, simply return the domain of the cell
+    # return puzzle.cells[row][column].domain[:]
 
     # Get the current domain for this variable
     domain = puzzle.cells[row][column].domain[:]
