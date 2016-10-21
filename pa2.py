@@ -12,9 +12,9 @@ def student_name():
     This function returns your name.  This will be used for automated grading
     """
 
-    #Task 1 CODE HERE
+    # Task 1 CODE HERE
 
-    #Change to be your name
+    # Change to be your name
     return 'Josh Hawkins'
 
 class Cell():
@@ -348,7 +348,7 @@ def get_unassigned_variables(puzzle):
     unassigned = []
     for r in range(9):
         for c in range(9):
-            #Unassigned cells have a value of None
+            # Unassigned cells have a value of None
             if puzzle.cells[r][c].value is None:
                 unassigned.append((r,c))
     return unassigned
@@ -361,22 +361,20 @@ def select_variable(puzzle):
     degree heuristic, and any remaining ties broken arbitrarily
     '''
 
-    # 0. Get the initial list of all unassigned variables
+    # Get the initial list of all unassigned variables
     unassigned = get_unassigned_variables(puzzle)
 
-    # 1. Use MRV heuristic to get list of variables with the min remaining values
+    # Use MRV heuristic to get list of variables with the min remaining values
     minimum_remaining_values = mrv(puzzle, unassigned)
 
     # If MRV identifies a unique variable, then return it
     if len(minimum_remaining_values) == 1:
         return minimum_remaining_values[0][0], minimum_remaining_values[0][1]
 
-    # 2. Refine list to those with maximum degree
+    # Refine list to those with maximum degree
     most_constaining_variables = max_degree(puzzle, minimum_remaining_values)
 
-    # 3. Return first variable in the list.  This will be the only one if there was a
-    #    unique most constraining variable, or the "alphabetically first" or "arbitrary" one of
-    #    them if there were ties
+    # Return first variable in the list
     return most_constaining_variables[0][0], most_constaining_variables[0][1]
 
 def order_values(puzzle, row, column):
@@ -387,10 +385,8 @@ def order_values(puzzle, row, column):
     domains by a particular variable=value assignment
     '''
 
-    #Get the current domain for this variable
+    # Get the current domain for this variable
     domain = puzzle.cells[row][column].domain[:]
-
-    # TODO: Remove this TASK 5 CODE HERE
 
     # Forward check each value in the domain and sort based on results
     scored = [(puzzle.forward_check(row, column, value, mode='count'), value) for value in domain]
@@ -399,7 +395,7 @@ def order_values(puzzle, row, column):
     # Strip constraint counts to just have the sorted domain values
     domain = [entry[1] for entry in scored]
 
-    #Change this to return an ordered list
+    # Change this to return an ordered list
     return domain
 
 def backtracking_search(puzzle):
@@ -412,58 +408,42 @@ def backtracking_search(puzzle):
     If successful, this function returns the solved puzzle object
     '''
 
-    # PSEUDO-CODE to help with structuring this function
-
-    # TASK 6 CODE HERE
-
-    # 1. Base case, is input [puzzle] solved? If so, return the puzzle. Use is_solved() function
-    #    to see if the puzzle is solved.
+    # Base case, is input [puzzle] solved? If so, return the puzzle
     if puzzle.is_solved():
         return puzzle
 
-    # 2. Select a variable to assign next ( use select_variable() function, which returns
-    #    row and column of the variable
+    # Select a variable to assign next
     r, c = select_variable(puzzle)
 
-    # 3. Select an ordering over the values (use order_values(r,c) where r, c are the row
-    #    and column of the selected variable.  It returns a list of values
+    # Select an ordering over the values
     domain = order_values(puzzle, r, c)
 
-    # 4. For each value in the ordered list:
+    # For each value in the ordered list:
     for value in domain:
 
-        # 4.1 Get a copy of the puzzle to modify
-        #     4.1.a Create new puzzle
+        # Get a copy of the puzzle to modify
         new_puzzle = Sudoku()
 
-        #     4.1.b Set it to be equal to the current puzzle (use copy_puzzle())
+        # Set it to be equal to the current puzzle
         new_puzzle.copy_puzzle(puzzle)
 
-        # 4.2 Assign current value to selected variable (use assign_value())
+        # Assign current value to selected variable
         new_puzzle.cells[r][c].assign_value(value)
 
-        # 4.3 Forward check from this assignment (use forward_check(), in 'remove' mode)
-        #     which will return False if this assignment is invalid (empty domain was found)
-        #     or True if it is valid.
-        # &
-        # 4.4 If forward checking detects a problem, then continue to the next value
+        # Forward check from this assignment
+        # If forward checking detects a problem, then continue to the next value
         if not new_puzzle.forward_check(r, c, value):
             continue
 
-        # 4.5 If forward checking doesn't detect problem, then recurse on the
-        #     modified puzzle (call backtracking_search())
+        # If forward checking doesn't detect problem, then recurse on
+        # the modified puzzle
         solution = backtracking_search(new_puzzle)
 
-        # 4.6 If the search succeeds (return value of backtracking is not None)
-        #     return solved puzzle! (this is what backtracking_search should return)
+        # If the search succeeds return solved puzzle
         if solution:
             return solution
 
-        # 4.7 If search is a failure, continue with next value for this variable
-        # if not solution:
-        #     continue # TODO: extraneous
-
-    # 5. If all values for the chosen variable failed, return failure (None)
+    # If all values for the chosen variable failed, return failure
     return None
 
 if __name__ == "__main__":
